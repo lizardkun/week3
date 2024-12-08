@@ -8,21 +8,53 @@ L.marker([51.5, -0.09]).addTo(map)
     .bindPopup('A pretty CSS popup.<br> Easily customizable.')
     .openPopup();
 
-// create a red polyline from an array of LatLng points
 
-// var latlngs = [
-//     [45.51, -122.68],
-//     [37.77, -122.43],
-//     [34.04, -118.2]
-// ];
+// Add an event listener for map clicks
+map.on('click', function(e) {
+    // Get the coordinates where the map was clicked
+    var latlng = e.latlng;
 
-// var polyline = L.polyline(latlngs, {color: 'red'}).addTo(map);
+    // Create the content for the popup
+    var popupContent = `
+        <div>
+            <p>Do you want to create a landmark here?</p>
+            <button id="yesButton" style="cursor: pointer;">Yes</button>
+        </div>
+    `;
 
-// // zoom the map to the polyline
-// map.fitBounds(polyline.getBounds());
+    // Create a popup at the clicked location
+    var popup = L.popup()
+        .setLatLng(latlng)
+        .setContent(popupContent)
+        .openOn(map);
+    
+    setTimeout(() => {
+        const yesButton = document.getElementById('yesButton');
+        if (yesButton) {
+            yesButton.addEventListener('click', function() {
+                // Redirect to another page with query parameters for the coordinates
+                window.location.href = `views/landmark.html?lat=${latlng.lat}&lng=${latlng.lng}`;
+            });
+        } else {
+            console.error('Yes button not found in the DOM.');
+        }
+    }, 10);
+    });
+// Load landmarks from localStorage
+function loadLandmarks() {
+    const landmarks = JSON.parse(localStorage.getItem('landmarks')) || [];
+    landmarks.forEach(landmark => {
+        const marker = L.marker([landmark.latitude, landmark.longitude]).addTo(map);
 
-$.getJSON('/get-path', function(data){
-    var polyline = L.polyline(data.path, {color: 'red'}).addTo(map)
-    map.fitBounds(polyline.getBounds());
+        // Create popup content with name, review, and image
+        const popupContent = `
+            <strong>${landmark.name}</strong><br>
+            ${landmark.review}<br>
+            ${landmark.image ? `<img src="${landmark.image}" alt="${landmark.name}" style="width: 100%; max-width: 200px; border-radius: 5px;">` : ''}
+        `;
+        marker.bindPopup(popupContent);
+    });
+}
 
-})
+// Load saved landmarks when the page is loaded
+loadLandmarks();

@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Landmark Features</title>
+    <style>
+        /* General styling */
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f9fa;
+        }
+
+        /* Navigation bar */
+        .navbar {
+            background-color: #007bff;
+            color: #fff;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar h1 {
+            font-size: 1.5rem;
+            margin: 0;
+        }
+
+        /* Main container */
+        .container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            color: #343a40;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #495057;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            font-size: 1rem;
+            border: 1px solid #ced4da;
+            border-radius: 5px;
+            box-sizing: border-box;
+            margin-top: 0.3rem;
+            background-color: #f9f9f9;
+        }
+
+        textarea {
+            resize: none;
+        }
+
+        input[type="file"] {
+            padding: 5px;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 1rem;
+            font-weight: bold;
+            color: #fff;
+            background-color: #007bff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        /* Cards preview for landmarks */
+        .card {
+            border: 1px solid #ced4da;
+            border-radius: 8px;
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            background: #f8f9fa;
+            box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .card img {
+            width: 80px;
+            height: 80px;
+            border-radius: 5px;
+            margin-right: 1rem;
+            object-fit: cover;
+        }
+
+        .card .content {
+            flex: 1;
+        }
+
+        .card .title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #343a40;
+        }
+
+        .card .review {
+            font-size: 0.95rem;
+            color: #6c757d;
+            margin: 0.5rem 0;
+        }
+
+        .card .rating {
+            display: flex;
+            align-items: center;
+            margin-top: 0.5rem;
+        }
+
+        .card .star {
+            color: #ffc107;
+            margin-right: 5px;
+        }
+
+        .card .star-gray {
+            color: #ced4da;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <h1>MapIt</h1>
+    </div>
+    <div class="container">
+        <h2>Add Features to Your Landmark</h2>
+        <form id="landmarkForm">
+            <div class="form-group">
+                <label for="latitude">Latitude:</label>
+                <input type="text" id="latitude" name="latitude" readonly>
+            </div>
+            <div class="form-group">
+                <label for="longitude">Longitude:</label>
+                <input type="text" id="longitude" name="longitude" readonly>
+            </div>
+            <div class="form-group">
+                <label for="landmarkName">Landmark Name:</label>
+                <input type="text" id="landmarkName" name="landmarkName" placeholder="Enter a name for the landmark">
+            </div>
+            <div class="form-group">
+                <label for="review">Add a Review:</label>
+                <textarea id="review" name="review" rows="5" placeholder="Write a review..."></textarea>
+            </div>
+            <div class="form-group">
+                <label for="landmarkImage">Upload Image:</label>
+                <input type="file" id="landmarkImage" name="landmarkImage" accept="image/*">
+            </div>
+            <button type="submit">Save and Go Back</button>
+        </form>
+    </div>
+
+    <script>
+        
+        const params = new URLSearchParams(window.location.search);
+        const lat = params.get('lat');
+        const lng = params.get('lng');
+
+        document.getElementById('latitude').value = lat;
+        document.getElementById('longitude').value = lng;
+
+        document.getElementById('landmarkForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const landmarkName = document.getElementById('landmarkName').value;
+            const review = document.getElementById('review').value;
+            const imageInput = document.getElementById('landmarkImage');
+            
+            const reader = new FileReader();
+            reader.onload = function () {
+                const imageBase64 = reader.result; 
+                
+                const landmarkData = {
+                    latitude: lat,
+                    longitude: lng,
+                    name: landmarkName,
+                    review: review,
+                    image: imageBase64, 
+                };
+
+                const landmarks = JSON.parse(localStorage.getItem('landmarks')) || [];
+                landmarks.push(landmarkData);
+                localStorage.setItem('landmarks', JSON.stringify(landmarks));
+
+                // Redirect back to the main page
+                window.location.href = '/vis';
+            };
+
+            if (imageInput.files[0]) {
+                reader.readAsDataURL(imageInput.files[0]); 
+            } else {
+                alert("Please upload an image.");
+            }
+        });
+    </script>
+</body>
+</html>

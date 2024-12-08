@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Landmarks</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f9fa;
+        }
+
+        .navbar {
+            background-color: #007bff;
+            color: #fff;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar h1 {
+            font-size: 1.5rem;
+            margin: 0;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 1rem;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            color: #343a40;
+            margin-bottom: 1.5rem;
+        }
+
+        .landmark-card {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            border: 1px solid #ced4da;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            background: #f8f9fa;
+            box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .landmark-card img {
+            width: 100px;
+            height: 100px;
+            border-radius: 8px;
+            margin-right: 1rem;
+            object-fit: cover;
+        }
+
+        .landmark-content {
+            flex: 1;
+        }
+
+        .landmark-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #343a40;
+            margin-bottom: 0.5rem;
+        }
+
+        .landmark-review {
+            font-size: 0.95rem;
+            color: #6c757d;
+            margin: 0.5rem 0;
+        }
+
+        .rating {
+            display: flex;
+            align-items: center;
+        }
+
+        .star {
+            color: #ffc107;
+            margin-right: 5px;
+        }
+
+        .star-gray {
+            color: #ced4da;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <h1>MapIt - Landmarks</h1>
+    </div>
+    <div class="container">
+        <h2>Added Landmarks</h2>
+        <div id="landmarkList">
+            <!-- Landmarks will be dynamically loaded here -->
+        </div>
+    </div>
+
+    <script>
+        // Fetch landmark data from localStorage
+        const landmarks = JSON.parse(localStorage.getItem('landmarks')) || [];
+
+        const landmarkList = document.getElementById('landmarkList');
+
+        if (landmarks.length === 0) {
+            landmarkList.innerHTML = '<p>No landmarks added yet.</p>';
+        } else {
+            landmarks.forEach(landmark => {
+                const card = document.createElement('div');
+                card.className = 'landmark-card';
+
+                
+                const img = document.createElement('img');
+                img.src = landmark.image || 'https://via.placeholder.com/100';
+                img.alt = landmark.name;
+
+               
+                const content = document.createElement('div');
+                content.className = 'landmark-content';
+
+                const title = document.createElement('div');
+                title.className = 'landmark-title';
+                title.textContent = landmark.name;
+
+                const review = document.createElement('div');
+                review.className = 'landmark-review';
+                review.textContent = landmark.review;
+
+                
+                const rating = document.createElement('div');
+                rating.className = 'rating';
+                for (let i = 0; i < 5; i++) {
+                    const star = document.createElement('span');
+                    star.className = i < (landmark.rating || 0) ? 'star' : 'star-gray';
+                    star.textContent = '★';
+                    rating.appendChild(star);
+                }
+
+                
+                content.appendChild(title);
+                content.appendChild(review);
+                content.appendChild(rating);
+
+                card.appendChild(img);
+                card.appendChild(content);
+
+                
+                landmarkList.appendChild(card);
+            });
+        }
+    </script>
+</body>
+</html>

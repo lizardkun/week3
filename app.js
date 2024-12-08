@@ -88,6 +88,12 @@ app.get('/vis', function (req, res) {
   } else
     res.sendFile('views/login.html',{root:__dirname})
 })
+
+
+app.get('/Landmarks', (req, res) => {
+    res.sendFile(path.join(__dirname, 'views/viewland.html'));
+});
+
 const visPathRoutes = require('./routes/vis-path')
 app.use(visPathRoutes);
 
@@ -95,6 +101,7 @@ app.use(visPathRoutes);
 
 const userRoutes = require('./routes/user')
 app.use(userRoutes);
+
 
 /*********************************/
 /******* Application start *******/
